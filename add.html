@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OPINIO-add</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+</head>
+
+<body>
+
+	<nav>
+		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="navbar-header" >
+				<h3><a href="/">Opinio</a></h3>
+            </div>
+            <div class="collapse navbar-collapse navbar-right">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+               		<li class="notsignedin"><a href="login">Sign in with twitter</a></li>
+	                <li class="signedin"><a href="/my">My Polls</a></li>
+	                <li class="signedin"><a href="/add">New Polls</a></li>
+	                <li class="signedin"><a href="/logout">Log Out</a></li>
+                </ul>
+            </div>
+		</div>
+	</nav>
+	<br><br><br><br>
+
+	<div class="container">
+		<form>
+    		<input type="field" placeholder="Question" id="question"></input><br>
+    		<input type="field" placeholder="Option1" id="1"></input>
+    		<input type="field" placeholder="Option2" id="2"></input>
+    		<span class="options"></span>
+    		<br>
+			<div class="btn btn-info add">Add option</div>
+    		<input type="field" value="ADD this question" class="submit btn btn-warning"></input>
+		</form>
+	</div>
+
+
+
+	<script src="js/jquery-2.1.4.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+<script>
+$(document).ready(function(){
+	var opts=2;
+	$(".add").on('click', function() {
+		var i=opts+1;
+		if(opts<10){
+			$(".options").append('<input type="field" id="'+i+'" placeholder="Option'+i+'"></input>');
+			opts++;
+		}
+	});
+	$(".submit").on('click', function() {
+		var str='{"countOptions":"'+opts;
+		str+='", "question":"' +$("#question").val();
+		for (var i = 1; i <= opts; i++) {
+			str+='", "option'+i+'":"'+$("#"+i).val();
+		}
+		str+='"}';
+		console.log(str);
+		$.ajax({
+			url: '/addquestion',
+			type: 'POST',
+			data:str,
+			contentType:"application/json"
+		})
+		.done(function(data) { 
+			console.log(data);
+			window.location=data;
+		});
+	});
+	$.get('/getcookie', function(c) {
+		if(c.twitterID){
+			$(".notsignedin").css('display','none');
+			$(".signedin").css('display', 'initial');
+			$(".name").html(c.name);
+		}
+	});
+	$(".logout").on('click', function() {
+		$.get('/logout', function(data) {
+			$(".notsignedin").css('display','initial');
+			$(".signedin").css('display', 'none');
+		});
+	});
+});
+</script>    
+</body>
+</html>

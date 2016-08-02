@@ -1,0 +1,31 @@
+.delete,.nav > .signedin{
+	display: none;
+}
+
+#optionsid:active,#optionsid:hover,#optionsid:focus,#optionsid:visited{
+	background-color: white;
+}
+input{
+	margin:5px;
+	padding:5px;
+	width:20%;
+}
+#question{
+	width:60%;
+}
+#myChart{
+	width:20%;
+}
+.jumbotron{
+	margin-left: 5%;
+	margin-right: 5%;
+}
+a.twitter-btn:hover,
+a.twitter-btn:focus {
+  background-color:rgba(0,132,180,1);
+  color:white;
+}
+a.twitter-btn{
+  background-color:rgba(0,132,180,0.8);
+  color:white;
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OPINIO-home</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+	<nav>
+		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="navbar-header" >
+				<h3><a href="/">Opinio</a></h3>
+            </div>
+            <div class="collapse navbar-collapse navbar-right">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+               		<li class="notsignedin"><a href="login">Sign in with twitter</a></li>
+	                <li class="signedin"><a href="/my">My Polls</a></li>
+	                <li class="signedin"><a href="/add">New Polls</a></li>
+	                <li class="signedin">
+	                	<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="name"></span><b class="caret"></b></a>
+                		<ul class="dropdown-menu multi-level">
+               				<li><a class="logout" href="/logout">Log Out</a></li>
+               			</ul>
+                    </li>
+                </ul>
+            </div>
+		</div>
+	</nav>
+	<br><br><br><br>
+	<div class="jumbotron row">
+		<div class="col-sm-4">
+			<div class="question"></div>
+			<div class="options"></div>
+			<form>
+				<select id="optionsid" class="list btn btn-default">
+					<option value="">Select Option</option>
+					<option class="custom" value="custom">Add custom field</option>
+				</select>
+				<input class="another" placeholder="Custom option" style="visibility:hidden"></input>
+			</form>
+			<div class="submit btn btn-warning">Submit</div>
+			<a target="_blank" class="btn twitter-btn" id="tw" href="" data-size="large">
+    			<i class="fa"></i>Share on Twitter
+			</a><br><br>
+			<div class="btn btn-danger delete">Delete Poll</div>
+		</div>
+		<div class="col-sm-8"><div class="canvas-holder half">
+			<canvas id="myChart"></canvas>
+		</div></div>
+	</div>
+	<script src="js/jquery-2.1.4.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/Chart.js"></script>
+    <script src="js/poll.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OPINIO-home</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+</head>
+
+<body>
+
+	<nav>
+		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="navbar-header" >
+				<h3><a href="/">Opinio</a></h3>
+            </div>
+            <div class="collapse navbar-collapse navbar-right">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+               		<li class="notsignedin"><a href="login">Sign in with twitter</a></li>
+	                <li class="signedin"><a href="/my">My Polls</a></li>
+	                <li class="signedin"><a href="/add">New Polls</a></li>
+	                <li class="signedin">
+	                	<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="name"></span><b class="caret"></b></a>
+                		<ul class="dropdown-menu multi-level">
+               				<li><a class="logout" href="/logout">Log Out</a></li>
+               			</ul>
+                    </li>
+                </ul>
+            </div>
+		</div>
+	</nav>
+	<br><br><br><br>
+
+	<div class="container">
+		<div class="poll list-group"></div>
+	</div>
+
+
+
+	<script src="js/jquery-2.1.4.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+
+<script >
+$(document).ready(function(){
+	$.ajax({
+		url: 'http://localhost:8081/getpolls',
+		type: 'GET',
+		dataType: 'json'
+	})
+	.done(function(data) {
+		var str="";
+		for(var i in data){
+			str+='<a class=" text-center list-group-item list-group-item-info" href="/'+data[i].id+'">'+data[i].question+'</a>';
+		}
+		$(".poll").html(str);
+	});
+	
+	$.ajax({
+		url: '/getcookie',
+		type: 'GET',
+		dataType: 'json'
+	})
+	.done(function(c) {
+		if(c.twitterID){
+			$(".notsignedin").css('display','none');
+			$(".signedin").css('display', 'initial');
+			$(".name").html(c.name);
+		}
+	});
+	$(".logout").on('click', function() {
+		$.ajax({
+			url: '/logout',
+			type: 'GET',
+		})
+		.done(function() {
+			$(".notsignedin").css('display','initial');
+			$(".signedin").css('display', 'none');
+		})
+	});
+});
+</script>    
+</body>
+</html>
