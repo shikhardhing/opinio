@@ -3,6 +3,7 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
+var twitterAPI = require('node-twitter-api');
 var app = express();
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -26,7 +27,6 @@ app.use(function (req, res, next) {
 })
 
 //SIGN IN WITH TWITTER
-var twitterAPI = require('node-twitter-api');
 var twitter = new twitterAPI({
     consumerKey: 'J5uwAAsAVCL5qXypuD2JvEZpH',
     consumerSecret: 'D9pID6kpYZ31J9hcbWWx8d1B4aBHAwhjjlrzeSEdGrK3k20hue',
