@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "give your opinion",
   "start":"node server.js",
-  "main": "server.js",
+  "main": "node server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
