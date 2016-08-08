@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
 var twitterAPI = require('node-twitter-api');
+app.set('port', (process.env.PORT || 5000));
 var app = express();
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -174,7 +175,7 @@ app.get('/add',function (req, res, next) {
 		res.redirect('/');
 });
 
-var server = app.listen(process.env.port||8081, function () {
+var server = app.listen(app.get('port'), function () {
 var host = 'localhost'
 var port = server.address().port
 console.log("Example app listening at http://%s:%s", host, port)
