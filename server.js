@@ -175,7 +175,11 @@ app.get('/add',function (req, res, next) {
 		res.redirect('/');
 });
 
+<<<<<<< HEAD
 var server = app.listen(app.get('port'), function () {
+=======
+var server = app.listen(process.env.PORT || 3000, function () {
+>>>>>>> ab807443caccbbf0a35586c80e04674c6c65a700
 var host = 'localhost'
 var port = server.address().port
 console.log("Example app listening at http://%s:%s", host, port)

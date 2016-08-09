@@ -2,11 +2,21 @@
   "name": "apinio",
   "version": "1.0.0",
   "description": "give your opinion",
-  "start":"node app.js",
-  "main": "server.js",
+  "engines": {
+    "node": "4.1.2"
+  },
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "express-mysql-session": "^1.1.1",
+    "express-session": "^1.14.0",
+    "mysql": "^2.11.1",
+    "node-twitter-api": "^1.7.4"
   },
   "repository": {
     "type": "git",
@@ -17,13 +27,5 @@
   "bugs": {
     "url": "https://github.com/shikhardhing/apinio/issues"
   },
-  "homepage": "https://github.com/shikhardhing/apinio#readme",
-  "dependencies": {
-    "body-parser": "^1.15.2",
-    "express": "^4.14.0",
-    "express-mysql-session": "^1.1.1",
-    "express-session": "^1.14.0",
-    "mysql": "^2.11.1",
-    "node-twitter-api": "^1.7.4"
-  }
+  "homepage": "https://github.com/shikhardhing/apinio#readme"
 }
