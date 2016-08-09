@@ -4,7 +4,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
 var twitterAPI = require('node-twitter-api');
-app.set('port', (process.env.PORT || 5000));
 var app = express();
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -175,15 +174,11 @@ app.get('/add',function (req, res, next) {
 		res.redirect('/');
 });
 
-<<<<<<< HEAD
-var server = app.listen(app.get('port'), function () {
-=======
-var server = app.listen(process.env.PORT || 3000, function () {
->>>>>>> ab807443caccbbf0a35586c80e04674c6c65a700
-var host = 'localhost'
-var port = server.address().port
-console.log("Example app listening at http://%s:%s", host, port)
+//app.set('port', (process.env.PORT || 5000));
+var server = app.listen(/*app.get('port')*/8081, function () {
+	var host = 'localhost'
+	var port = server.address().port
+	console.log("Example app listening at http://%s:%s", host, port)
 });
-
 //create table polls (id int, madeby varchar(10),countOptions int,question varchar(50),option1 varchar(50),option2 varchar(50),option3 varchar(50),option4 varchar(50),option5 varchar(50),option6 varchar(50),option7 varchar(50),option8 varchar(50),option9 varchar(50),option10 varchar(50));
 //create table countPolls (id int,option1 int,option2 int,option3 int,option4 int,option5 int,option6 int,option7 int,option8 int,option9 int,option10 int);
