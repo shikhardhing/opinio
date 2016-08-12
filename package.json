@@ -14,9 +14,8 @@
     "body-parser": "*",
     "connect-mongo": "^1.3.2",
     "express": "*",
-    "express-mysql-session": "*",
     "express-session": "*",
-    "mysql": "*",
+    "mongoose": "^4.5.8",
     "node-twitter-api": "*"
   },
   "repository": {
@@ -28,5 +27,6 @@
   "bugs": {
     "url": "https://github.com/shikhardhing/apinio/issues"
   },
-  "homepage": "https://github.com/shikhardhing/apinio#readme"
+  "homepage": "https://github.com/shikhardhing/apinio#readme",
+  "devDependencies": {}
 }
