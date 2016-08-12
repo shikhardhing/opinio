@@ -44,7 +44,7 @@
 <script >
 $(document).ready(function(){
 	$.ajax({
-		url: 'http://localhost:8081/getpolls',
+		url: window.location+'getpolls',
 		type: 'GET',
 		dataType: 'json'
 	})

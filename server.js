@@ -1,38 +1,50 @@
 var express = require('express');
-var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var MySQLStore = require('express-mysql-session')(session);
 var twitterAPI = require('node-twitter-api');
 var app = express();
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'shikhar',
-  password : 'password',
-  database : 'myDB'
-});
-connection.connect();
+const MongoStore = require('connect-mongo')(session);
 
-var sessionStore = new MySQLStore({},connection);
+var mongoose = require('mongoose');
+//var url="mongodb://<shikhar97>:<(xyz123)>@ds145315.mlab.com:45315/qwerty";
+var url = 'mongodb://localhost:27017/opinio'
+mongoose.connect(url);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+	console.log("connected");
+});
 app.use(session({
     key: 'session_cookie_name',
     secret: 'session_cookie_secret',
-    store:sessionStore,
+    store:new MongoStore({mongooseConnection:db}),
     resave: true,
     saveUninitialized: true
 }));
-app.use(function (req, res, next) {
-	var twitterID;
-	next();
+var pollsSchema=mongoose.Schema({
+	id: Number,
+	madeby:String,
+	countOptions:Number,
+	question:String,
+	option1:String,option2:String,option3:String,option4:String,option5:String,
+	option6:String,option7:String,option8:String,option9:String,option10:String
 })
+var pollsRecords=mongoose.model('pollsSchema',pollsSchema)
+var countPollsSchema=mongoose.Schema({
+	id: Number,
+	option1:Number,option2:Number,option3:Number,option4:Number,option5:Number,
+	option6:Number,option7:Number,option8:Number,option9:Number,option10:Number
+})
+var countPollsRecords=mongoose.model('countPollsSchema',countPollsSchema)
 
-//SIGN IN WITH TWITTER
-var twitter = new twitterAPI({
-    consumerKey: 'J5uwAAsAVCL5qXypuD2JvEZpH',
-    consumerSecret: 'D9pID6kpYZ31J9hcbWWx8d1B4aBHAwhjjlrzeSEdGrK3k20hue',
-    callback: 'http://localhost:8081/callback'
-});
+var twitter
 app.get('/login',function(req,res,next){
+	//SIGN IN WITH TWITTER
+	twitter = new twitterAPI({
+	    consumerKey: 'J5uwAAsAVCL5qXypuD2JvEZpH',
+	    consumerSecret: 'D9pID6kpYZ31J9hcbWWx8d1B4aBHAwhjjlrzeSEdGrK3k20hue',
+	    callback: req.protocol + '://' + req.get('host') + '/callback'
+	});
 	twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
 	    if (error) {
 	        console.log("Error getting OAuth request token : " + error);
@@ -74,88 +86,102 @@ app.get('/logout',function(req,res,next){
 })
 //RETURNS LIST OF QUESTIONS
 app.get('/getpolls',function (req, res, next) {
-	connection.query('SELECT * FROM polls',function(err,results,fields){
-		if(err) throw err;
-		res.send(results);
-	});
+	pollsRecords.find({},function(err,results){
+		if(err) throw err
+		res.send(results)
+	})
 });
 app.get('/getmypolls',function (req, res, next) {
 	if(!req.session.twitterID)
 		res.redirect('/');
-	connection.query('SELECT * FROM polls WHERE madeby='+req.session.twitterID,function(err,results,fields){
-		if(err) throw err;
-		res.send(results);
-	});
+	pollsRecords.find({madeby:req.session.twitterID},function(err,results){
+		if(err) throw err
+		res.send(results)
+	})
 });
 //RETURNS PARTICULAR QUESTION AND OPTIONS
 app.get('/:id([0-9]+)/pollDetail', function (req, res) {
-	connection.query('SELECT * FROM polls WHERE id='+req.params.id,function(err,results,fields){
+	pollsRecords.find({id:req.params.id},function(err,results){
 		if(err) throw err;
 		res.send(results[0]);
-	});
+	})
 });
 app.get('/:id([0-9]+)/pollValues', function (req, res) {
-	connection.query('SELECT * FROM countPolls WHERE id='+req.params.id,function(err,results,fields){
+	countPollsRecords.find({id:req.params.id},function(err,results){
 		if(err) throw err;
 		res.send(results[0]);
-	});
+	})
 });
 app.use(bodyParser.json());
 //ADD ENTRY TO DB
 app.post('/addquestion',function (req, res) {
-	connection.query('SELECT MAX(id) FROM polls',function(err,results,fields){
-		if(err) throw err;
-		var curid=results[0]["MAX(id)"]+1;
-		var q='INSERT INTO polls VALUES('+curid+','+req.session.twitterID;
+	pollsRecords.find().sort('-id').exec(function(err,results){
+		if(err) throw err
+		if(!!results[0])
+			var curid=results[0]["id"]+1
+		else
+			var curid=1;
+		
+		var q='{"id":'+curid+',"madeby":'+req.session.twitterID
 		for(var i in req.body){
-			q+=',"'+req.body[i]+'"';
+			if(i=="countOptions")
+				q+=',"'+i+'":'+req.body[i]
+			else
+				q+=',"'+i+'":"'+req.body[i]+'"'
 		}
-		for(i=req.body.countOptions;i<10;i++){
-			q+=',"NULL"';
+		q+='}'
+		var record=new pollsRecords(JSON.parse(q))
+		record.save(function(err){
+			if(err) throw err
+		})
+		var qi='{"id":'+curid
+		for(var i=1;i<11;i++){
+			qi+=',"option'+i+'":'+0
 		}
-		q+=');';
-		connection.query(q,function(err,results,fields){
-			if(err) throw err;
-		});
-		connection.query('INSERT INTO countPolls VALUES('+curid+',0,0,0,0,0,0,0,0,0,0);',function(err,results,fields){
-			if(err) throw err;
-			res.send('/'+curid);
-			res.end();
-		});
-	});
+		qi+='}'
+		var countRecord=new countPollsRecords(JSON.parse(qi))
+		countRecord.save(function(err){
+			if(err) throw err
+			res.send('/'+curid)
+			res.end()
+		})
+	})
 });
 app.post('/:id([0-9]+)/update', function (req, res) {
 	if(req.body.new==1){
-		connection.query('SELECT countOptions FROM polls WHERE id='+req.params.id,function(err,results,fields){
+		pollsRecords.find({id:req.params.id},function(err,results){
 			if(err) throw err;
 			var nopt=results[0].countOptions+1;
-			q='UPDATE polls SET countOptions='+nopt+',option'+nopt+'="'+req.body.opt+'" WHERE id='+req.params.id;
-			qi='UPDATE countPolls SET option'+nopt+'=1 WHERE id='+req.params.id;
-			connection.query(q,function(err,results,fields){
-				if(err) throw err;
-			});
-			connection.query(qi,function(err,results,fields){
-				if(err) throw err;
-				res.end();
-			});
-		});
+			var q='{"countOptions":'+nopt+',"option'+nopt+'":"'+req.body.opt+'"}'
+			pollsRecords.findOneAndUpdate({id:req.params.id},JSON.parse(q),function(err,results){
+				if(err) throw err
+			})
+			var qi='{"option'+nopt+'":1}'
+			countPollsRecords.findOneAndUpdate({id:req.params.id},JSON.parse(qi),function(err,results){
+				if(err) throw err
+				res.end()
+			})
+		})
 	}
 	else{
-		q='UPDATE countPolls SET option'+req.body.opt+'=option'+req.body.opt+'+1 WHERE id='+req.params.id;
-		connection.query(q,function(err,results,fields){
-			if(err) throw err;
-			res.end();
-		});
+		countPollsRecords.find({id:req.params.id},function(err,results){
+			var ne=results[0]["option"+req.body.opt]+1
+			var q='{"option'+req.body.opt+'":'+ne+'}'
+			countPollsRecords.findOneAndUpdate({id:req.params.id},JSON.parse(q),function(err,results){
+				if(err) throw err
+				res.end()
+			})
+		})
 	}
 });
 app.post('/:id([0-9]+)/delete', function (req, res) {
-	connection.query('DELETE FROM polls WHERE id='+req.params.id,function(err,results,fields){
-		if(err) throw err;
-	});
-	connection.query('DELETE FROM countPolls WHERE id='+req.params.id,function(err,results,fields){
-		if(err) throw err;
-		res.end();
-	});
+	pollsRecords.findOneAndRemove({id:req.params.id},function(err,record){
+		if(err) throw err
+	})
+	countPollsRecords.findOneAndRemove({id:req.params.id},function(err,record){
+		if(err) throw err
+		res.end()
+	})
 });
 app.use(express.static(__dirname));
 app.get('/poll',function (req, res, next) {
@@ -175,10 +201,8 @@ app.get('/add',function (req, res, next) {
 });
 
 //app.set('port', (process.env.PORT || 5000));
-var server = app.listen(/*app.get('port')*/8081, function () {
+var server = app.listen(/*app.get('port')*/process.env.PORT || 5000, function () {
 	var host = 'localhost'
 	var port = server.address().port
 	console.log("Example app listening at http://%s:%s", host, port)
 });
-//create table polls (id int, madeby varchar(10),countOptions int,question varchar(50),option1 varchar(50),option2 varchar(50),option3 varchar(50),option4 varchar(50),option5 varchar(50),option6 varchar(50),option7 varchar(50),option8 varchar(50),option9 varchar(50),option10 varchar(50));
-//create table countPolls (id int,option1 int,option2 int,option3 int,option4 int,option5 int,option6 int,option7 int,option8 int,option9 int,option10 int);

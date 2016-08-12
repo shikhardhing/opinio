@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "body-parser": "*",
+    "connect-mongo": "^1.3.2",
     "express": "*",
     "express-mysql-session": "*",
     "express-session": "*",

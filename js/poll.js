@@ -6,12 +6,14 @@ $.ajax({
 	dataType: 'json'
 })
 .done(function(poll) {
+		console.log(poll);
 	$.ajax({
 		url: window.location.pathname+'/pollValues',
 		type: 'GET',
 		dataType: 'json'
 	})
 	.done(function(values) {
+		console.log(poll);
 		$(".question").html('<h3>'+poll.question+'</h3>');
 		if(twitterID){
 			if(twitterID==poll.madeby){
@@ -75,6 +77,7 @@ $(".submit").on('click', function() {
 				contentType:"application/json"
 			})
 			.done(function() {
+				console.log("reload")
 				window.location.reload();
 			});
 		}
