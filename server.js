@@ -6,8 +6,9 @@ var app = express();
 const MongoStore = require('connect-mongo')(session);
 
 var mongoose = require('mongoose');
-//var url="mongodb://<shikhar97>:<(xyz123)>@ds145315.mlab.com:45315/qwerty";
-var url = 'mongodb://localhost:27017/opinio'
+//var url="mongodb://<shikhar97>:<(xyz123)>@ds153845.mlab.com:53845/opinio";
+//var url = 'mongodb://localhost:27017/opinio'
+var url= 'mongodb://opinio:password@ds153845.mlab.com:53845/opinio'
 mongoose.connect(url);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
