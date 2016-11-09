@@ -2,9 +2,9 @@
 <html>
 <head>
 	<title>OPINIO-home</title>
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/font-awesome.css">
 </head>
 
 <body>
@@ -38,8 +38,8 @@
 
 
 
-	<script src="js/jquery-2.1.4.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<script src="/js/jquery-2.1.4.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
 
 <script >
 $(document).ready(function(){
@@ -55,7 +55,7 @@ $(document).ready(function(){
 		}
 		$(".poll").html(str);
 	});
-	
+
 	$.ajax({
 		url: '/getcookie',
 		type: 'GET',
@@ -79,6 +79,6 @@ $(document).ready(function(){
 		})
 	});
 });
-</script>    
+</script>
 </body>
 </html>

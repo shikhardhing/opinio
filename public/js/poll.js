@@ -105,6 +105,9 @@ $.get('/getcookie', function(c) {
 		$(".name").html(c.name);
 		twitterID=c.twitterID;
 	}
+	if(c.done&&c.twitterID!=4665404898){
+		$(".polled").css('display','none');
+	}
 });
 $(".logout").on('click', function() {
 	$.get('/logout', function(data) {
