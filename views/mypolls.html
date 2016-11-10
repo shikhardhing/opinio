@@ -44,11 +44,12 @@
 <script >
 $(document).ready(function(){
 	$.ajax({
-		url: 'http://localhost:8081/getmypolls',
+		url: document.location.origin+'/getmypolls',
 		type: 'GET',
 		dataType: 'json'
 	})
 	.done(function(data) {
+		console.log(data);
 		var str="";
 		for(var i in data){
 			str+='<a class=" text-center list-group-item list-group-item-info" href="/'+data[i].id+'">'+data[i].question+'</a>';

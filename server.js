@@ -7,7 +7,8 @@ var mongoose = require('mongoose');
 
 const pollController = require('./controllers/poll');
 
-var url= 'mongodb://opinio:password@ds153845.mlab.com:53845/opinio'
+//var url= 'mongodb://opinio:password@ds153845.mlab.com:53845/opinio';
+var url= 'mongodb://localhost:27017/opinio';
 mongoose.connect(url);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -37,6 +38,7 @@ app.get('/:id([0-9]+)/pollDetail',pollController.pollDetails);
 app.get('/:id([0-9]+)/pollValues',pollController.pollValues);
 app.post('/:id([0-9]+)/update',pollController.update);
 app.post('/:id([0-9]+)/delete',pollController.delete);
+app.get('/:id/voted',pollController.voted);
 
 var twitter
 app.get('/login',function(req,res,next){

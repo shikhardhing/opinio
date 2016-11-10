@@ -9,4 +9,7 @@ var pollsSchema=mongoose.Schema({
 	option6:String,option7:String,option8:String,option9:String,option10:String
 });
 const Polls=mongoose.model('pollsSchema',pollsSchema);
+
+
+
 module.exports = Polls;

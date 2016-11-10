@@ -104,9 +104,17 @@ $.get('/getcookie', function(c) {
 		$(".signedin").css('display', 'initial');
 		$(".name").html(c.name);
 		twitterID=c.twitterID;
-	}
-	if(c.done&&c.twitterID!=4665404898){
-		$(".polled").css('display','none');
+		$.ajax({		
+			url: window.location.pathname+'/voted',
+			type: 'GET',
+			contentType:"application/json"
+		})
+		.done(function(data) {
+			console.log(data);
+			if(data.length==0){
+				$(".submit").attr('disabled',false);
+			}
+		});
 	}
 });
 $(".logout").on('click', function() {

@@ -1,11 +1,14 @@
 const pollsRecords = require('../models/Polls');
 const countPollsRecords = require('../models/countPolls');
+const votersRecords=require('../models/Voters');
 
 //RETURNS LIST OF QUESTIONS
 exports.getPolls=(req,res,next) => {
 	pollsRecords.find({},function(err,results){
-		if(err) throw err
-		res.send(results)
+		if(err) throw err;
+		console.log(results);
+		res.send(results);
+		res.end();
 	})
 }
 //RETURNS PARTICULAR QUESTION AND OPTIONS
@@ -16,12 +19,18 @@ exports.pollDetails=(req,res,next) => {
 	});
 }
 exports.getMyPolls=(req,res,next) => {
-	if(!req.session.twitterID)
-		res.redirect('/');
-	console.log(req.session.twitterID);
+	//res.end();
+	//res.send(pollsSchema.returnAllPolls(req.session.twitterID));
 	pollsRecords.find({madeby:req.session.twitterID},function(err,results){
-		if(err) throw err
-		res.send(results)
+		if(err) throw err;
+		console.log(results[0]);
+		res.send(results[0]);
+	});
+}
+exports.voted=(req,res,next) => {
+	votersRecords.find({pollID:req.params.id,voterID:req.session.twitterID},function(err,results){
+		if(err) throw err;
+		res.send(results);
 	})
 }
 exports.pollValues=(req,res,next) => {
@@ -76,7 +85,6 @@ exports.update=(req,res,next) => {
 			var qi='{"option'+nopt+'":1}'
 			countPollsRecords.findOneAndUpdate({id:req.params.id},JSON.parse(qi),function(err,results){
 				if(err) throw err
-				res.end()
 			})
 		})
 	}
@@ -90,12 +98,20 @@ exports.update=(req,res,next) => {
 			})
 		})
 	}
+	var voted=new votersRecords({pollID:req.params.id,voterID:req.session.twitterID})
+	voted.save(function(err){
+		if(err) throw err
+		res.end()
+	})
 }
 exports.delete=(req,res,next) => {
 	pollsRecords.findOneAndRemove({id:req.params.id},function(err,record){
 		if(err) throw err
 	})
 	countPollsRecords.findOneAndRemove({id:req.params.id},function(err,record){
+		if(err) throw err
+	})
+	votersRecords.findOneAndRemove({id:req.params.id},function(err,record){
 		if(err) throw err
 		res.end()
 	})
