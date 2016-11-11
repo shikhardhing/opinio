@@ -7,8 +7,8 @@ var mongoose = require('mongoose');
 
 const pollController = require('./controllers/poll');
 
-var url= 'mongodb://opinio:password@ds153845.mlab.com:53845/opinio';
-//var url= 'mongodb://localhost:27017/opinio';
+//var url= 'mongodb://opinio:password@ds153845.mlab.com:53845/opinio';
+var url= 'mongodb://localhost:27017/opinio';
 mongoose.connect(url);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -32,7 +32,7 @@ app.use('/css', express.static(__dirname + '/public/css'));
 
 //Routes
 app.get('/getpolls',pollController.getPolls);
-app.get('/getmypolls',pollController.getMyPolls);
+app.get('/getmypolls',pollController.myPolls);
 app.post('/addquestion',pollController.addQuestion);
 app.get('/:id([0-9]+)/pollDetail',pollController.pollDetails);
 app.get('/:id([0-9]+)/pollValues',pollController.pollValues);
