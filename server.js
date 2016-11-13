@@ -1,22 +1,21 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var twitterAPI = require('node-twitter-api');
 const MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
 
 const pollController = require('./controllers/poll');
 const userController = require('./controllers/user');
 
-//var url= 'mongodb://opinio:password@ds153845.mlab.com:53845/opinio';
-var url= 'mongodb://localhost:27017/opinio';
+var url= 'mongodb://opinio:password@ds153845.mlab.com:53845/opinio';
+//var url= 'mongodb://localhost:27017/opinio';
 mongoose.connect(url);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
 	console.log("connected");
 });
-
+//app configurations
 var app = express();
 app.use(session({
     key: 'session_cookie_name',
