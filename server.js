@@ -6,6 +6,7 @@ const MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
 
 const pollController = require('./controllers/poll');
+const userController = require('./controllers/user');
 
 //var url= 'mongodb://opinio:password@ds153845.mlab.com:53845/opinio';
 var url= 'mongodb://localhost:27017/opinio';
@@ -40,53 +41,10 @@ app.post('/:id([0-9]+)/update',pollController.update);
 app.post('/:id([0-9]+)/delete',pollController.delete);
 app.get('/:id/voted',pollController.voted);
 
-var twitter
-app.get('/login',function(req,res,next){
-	//SIGN IN WITH TWITTER
-	twitter = new twitterAPI({
-	    consumerKey: 'J5uwAAsAVCL5qXypuD2JvEZpH',
-	    consumerSecret: 'D9pID6kpYZ31J9hcbWWx8d1B4aBHAwhjjlrzeSEdGrK3k20hue',
-	    callback: req.protocol + '://' + req.get('host') + '/callback'
-	});
-	twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
-	    if (error) {
-	        console.log("Error getting OAuth request token : " + error);
-	    }
-	    else {
-	    	requestTokeng=requestToken;
-	    	requestTokenSecretg=requestTokenSecret;
-	    	res.redirect('https://twitter.com/oauth/authenticate?oauth_token='+requestToken);
-	    }
-	});
-});
-app.get('/callback',function(req,res,next){
-	oauth_verifierg=req.query.oauth_verifier;
-	twitter.getAccessToken(requestTokeng, requestTokenSecretg, oauth_verifierg, function(error, accessToken, accessTokenSecret, results) {
-	    if (error) console.log(error);
-	    else {
-	    	accessTokeng=accessToken;
-	    	accessTokenSecretg=accessTokenSecret;
-	    }
-		twitter.verifyCredentials(accessTokeng,accessTokenSecretg,function(error,data,response){
-			var time = 864000000;
-			req.session.cookie.maxAge = time;
-			req.session.sessionID=req.sessionID;
-			req.session.twitterID=data.id;
-			req.session.name=data.name;
-			res.redirect('/');
-		});
-	});
-})
-//COOKIE HANDLING
-app.get('/getcookie',function(req,res,next){
-	res.send(req.session);
-});
-app.get('/logout',function(req,res,next){
-	req.session.regenerate(function(e){
-		if (e) throw e;
-		res.redirect('/');
-	});
-})
+app.get('/login',userController.login)
+app.get('/callback',userController.callback)
+app.get('/getcookie',userController.getCookie)
+app.get('/logout',userController.logout)
 
 app.get('/',function (req, res, next) {
 	res.sendFile(__dirname+"/views/index.html");
