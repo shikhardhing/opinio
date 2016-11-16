@@ -14,13 +14,13 @@ exports.getPollDetail=(pollID,callback)=>{
 exports.getMyPolls=(twitterID,callback)=>{
 	pollsRecords.find({madeby:twitterID},function(err,results){
 		if(err) throw err
-		callback(results[0])
+		callback(results)
 	});
 }
 exports.getCurrentID=(callback)=>{
 	pollsRecords.find().sort('-id').exec(function(err,results){
 		if(err) throw err
-		callback(results)		
+		callback(results)
 	})
 }
 exports.add=(json)=>{
